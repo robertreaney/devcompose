@@ -1,0 +1,29 @@
+services:
+  frontend:
+    container_name: frontend
+    build: src/frontend
+    ports:
+      - 8501:8501
+    depends_on:
+      - backend
+    networks:
+      - app
+    volumes:
+      - ./src/frontend:/wd
+
+  backend:
+    container_name: backend
+    build: src/backend
+    ports:
+      - 8000:8000
+      - 5678:5678
+    networks:
+      - app
+    volumes:
+      - ./src/backend:/wd
+    command: sh -c "pip install debugpy -t /tmp && python /tmp/debugpy --wait-for-client --listen 0.0.0.0:5678 -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
+
+
+networks:
+  app:
+    driver: bridge
