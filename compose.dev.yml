@@ -1,0 +1,26 @@
+version: "3"
+
+services:
+
+  frontend:
+    build: src/backend
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    ports:
+      - 8000:8000
+      - 5678:5678
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./src/backend
+          target: /wd
+
+  backend:
+    build: src/frontend
+    command: streamlit run app.py
+    ports:
+      - 8501:8501
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./src/frontend
+          target: /wd
